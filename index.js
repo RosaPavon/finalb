@@ -77,6 +77,7 @@ passport.serializeUser(function (user, done){
 
 passport.deserializeUser(function (email, done){
     app.locals.db.collection("users").findOne({email:email}, function (err,user){
+        
         if (err){
             return done(err)
         }
@@ -102,11 +103,11 @@ app.post(//funcion authenticate de passport
 
 app.all("/api", function (req, res){
     //hacer llamada a la api y recuperar el usuario
-    console.log("/api")
-   app.locals.db.collection("users").findOne({email:req.user.email},
+   
+   app.locals.db.collection("users").findOne({email:req.body.email},
    function (err,user){
     if (err){
-        res.send({mensaje:"liada"})
+        res.send({mensaje:"error"})
     }
     else{
         res.send({logged:true, mensaje:"Login correcto", user:user})
