@@ -1,11 +1,16 @@
 const express=require("express")
-const app =express()
 const cors= require("cors")
+const mongodb = require("mongodb")
+const router = express.Router()
+require("dotenv").config()
+
+const app =express()
+
 let puerto= process.env.PORT || 3001
 
-const mongodb = require("mongodb")
 let MongoClient = mongodb.MongoClient
-let db
+let db 
+
 
 const passport = require("passport")
 const LocalStrategy = require("passport-local").Strategy
@@ -17,19 +22,25 @@ app.use(cors())
 
 app.use(
     session({
-        secret:"patata",//el string que autetifica que esta cookie la puso esta web
+        secret:"patatamaster",//el string que autetifica que esta cookie la puso esta web
         resave:false,//evitar crear sesiones vacias
         saveUninitialized:false,//evita reseteo de sesion
     })
 )
 
+const usuarios= require("./usuarios")
+app.use("/usuarios", usuarios)
+const crearreceta= require("./crearreceta")
+app.use("/crearreceta", crearreceta)
+
+
 app.use(passport.initialize())
 app.use(passport.session())
 
-MongoClient.connect("mongodb://127.0.0.1:27017", { useUnifiedTopology:true}, function(error, client){
+MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology:true}, function(error, client){
     error
     ? console.log("🔴 Mongodb no conectado")
-    : (db = client.db("cocinillas"), console.log("🟢 Mongodb conectado"))
+    : (app.locals.db = client.db("cocinillas"), console.log("🟢 Mongodb conectado"))
 })
 
 //____Autorización y gestión de sesiones____
@@ -41,7 +52,7 @@ passport.use(
             passwordField: "password"//aqui nos permite modificar el password por otro elemento
         },
         function( email, password, done){//done es funcion interna de passport para ir avanzando pasos
-            db.collection("users").findOne(//los datos de nuestro servidor
+            app.locals.db.collection("users").findOne(//los datos de nuestro servidor
                 {email : email},//buscamos el email que le hemos pasado
                 function (err, user){
                     if(err){
@@ -65,7 +76,7 @@ passport.serializeUser(function (user, done){
 })
 
 passport.deserializeUser(function (email, done){
-    db.collection("users").findOne({email:email}, function (err,user){
+    app.locals.db.collection("users").findOne({email:email}, function (err,user){
         if (err){
             return done(err)
         }
@@ -90,7 +101,19 @@ app.post(//funcion authenticate de passport
 //login ok
 
 app.all("/api", function (req, res){
-   res.send({logged:true, mensaje:"Login correcto"})
+    //hacer llamada a la api y recuperar el usuario
+    console.log("/api")
+   app.locals.db.collection("users").findOne({email:req.user.email},
+   function (err,user){
+    if (err){
+        res.send({mensaje:"liada"})
+    }
+    else{
+        res.send({logged:true, mensaje:"Login correcto", user:user})
+    }
+})
+
+   
     
 })
 
@@ -99,7 +122,7 @@ app.all("/api", function (req, res){
 app.all("/api/fail", function(req, res){
     res.status(401).send ({
         logged:false,
-        mensaje:"Denegado"})
+        mensaje:"Login incorrecto"})
 })
 
 //__________________Logout____________________
@@ -109,42 +132,25 @@ app.post("/logout", function(req, res){
     res.send({mensaje: " Logout correcto"})
 })
 
-//___________________Rutas____________________
 
-app.post("/registro", function(req, res) {
-    //añadir bcrypt
-    db.collection("users")
-    .find({ email:req.body.email})
-    .toArray(function (err, user){
-        if (user.length === 0){// si no hay usuario puedo crear uno 
-            db.collection("users").insertOne(//inserto un usuario
-                {
-                    email:req.body.email,
-                    password: req.body.password,
-                },
-                function (err, respuesta){
-                    if (err !== null){
-                        console.log(err)
-                        res.send({mensaje: "Ha habido un error" + err})
-                    }else{
-                        res.send({mensaje:"Registrado"})
-                    }
-                }
-            )
-        }else{
-            res.send({ mensaje: "Usuario ya registrado"})
-        }
-    })
+//_______________RUTAS__________
 
-})
-
-//_______________Pruebas__________
-
-app.get("/prueba", function(req, res){
+/* app.get("/usuarios", function(req, res){
     req.isAuthenticated()
-    ? res.send({mensaje:"Todo ok"})
-    : res.send({mensaje:"Necesitas logearte"})
-})
+    ? req.app.locals.db.collection("users")
+    .find({email:req.body.email}, function (err,user){
+        if (err){
+            return done(err)
+        }
+        if(!user){
+            return done(null, null)
+        }
+        return done(null, user) //console.log(user)
+    }))
+     */
+
+    
+
 
 
 

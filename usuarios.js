@@ -4,12 +4,13 @@ const router = express.Router();
 router.post("/registro", function(req, res) {
     //añadir bcrypt
     req.app.locals.db.collection("users")
-    .find({ username:req.body.username})
+    .find({ email:req.body.email})
     .toArray(function (err, user){
         if (user.length === 0){// si no hay usuario puedo crear uno 
             req.app.locals.db.collection("users").insertOne(//inserto un usuario
                 {
-                    username:req.body.username,
+                    usuario:req.body.usuario,
+                    email:req.body.email,
                     password: req.body.password,
                 },
                 function (err, respuesta){
@@ -22,12 +23,12 @@ router.post("/registro", function(req, res) {
                 }
             )
         }else{
-            res.send({ mensaje: "Usuario ya registrado"})
+            //falta añadir si esta en blanco
+            res.send({ mensaje: "Email ya registrado"})
         }
     })
 
 })
-
 
 
 
