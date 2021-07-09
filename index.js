@@ -4,6 +4,8 @@ const mongodb = require("mongodb")
 const router = express.Router()
 require("dotenv").config()
 
+
+
 const app =express()
 
 let puerto= process.env.PORT || 3001
@@ -12,30 +14,31 @@ let MongoClient = mongodb.MongoClient
 let db 
 
 
-const passport = require("passport")
+/* const passport = require("passport")
 const LocalStrategy = require("passport-local").Strategy
-const session = require("express-session")
+const session = require("express-session") */
+
+
 
 app.use(express.urlencoded({ extended : false}))//para acceder al body de la petición
 app.use(express.json())
 app.use(cors())
 
-app.use(
+/* app.use(
     session({
         secret:"patatamaster",//el string que autetifica que esta cookie la puso esta web
         resave:false,//evitar crear sesiones vacias
         saveUninitialized:false,//evita reseteo de sesion
     })
-)
+) */
 
-const usuarios= require("./usuarios")
+/* const usuarios= require("./usuarios")
 app.use("/usuarios", usuarios)
 const crearreceta= require("./crearreceta")
-app.use("/crearreceta", crearreceta)
+app.use("/crearreceta", crearreceta) */
 
-
-app.use(passport.initialize())
-app.use(passport.session())
+/* app.use(passport.initialize())
+app.use(passport.session()) */
 
 MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology:true}, function(error, client){
     error
@@ -43,6 +46,14 @@ MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTo
     : (app.locals.db = client.db("cocinillas"), console.log("🟢 Mongodb conectado"))
 })
 
+app.listen(puerto, function(err){
+    err
+    ? console.log("🔴 Servidor fallido")
+    : console.log("🟢 Servidor funcionando en el puerto:" + puerto)
+})
+
+
+/* 
 //____Autorización y gestión de sesiones____
 
 passport.use(
@@ -65,8 +76,7 @@ passport.use(
                         return done (null, false)
                     }
                     return done (null, user)//si todo esta ok creamos una sesión al usuario, y pone una cookie en la sesión del usuario
-                }
-            )
+                })
         }
     )
 )
@@ -74,6 +84,7 @@ passport.use(
 passport.serializeUser(function (user, done){
     done(null, user.email)//done llama al siguiente paso
 })
+
 
 passport.deserializeUser(function (email, done){
     app.locals.db.collection("users").findOne({email:email}, function (err,user){
@@ -94,6 +105,7 @@ passport.deserializeUser(function (email, done){
 app.post(//funcion authenticate de passport
     "/login",
     passport.authenticate("local", {
+        
         successRedirect:"/api",//si es ok redirigimos a esta dirección
         failureRedirect: "/api/fail",//si ha ido mal redirigimos a esta dirección
     })
@@ -142,11 +154,7 @@ app.post("/logout", function(req, res){
     req.logOut()
     res.send({mensaje: " Logout correcto"})
 })
+ */
 
 
 
-app.listen(puerto, function(err){
-    err
-    ? console.log("🔴 Servidor fallido")
-    : console.log("🟢 Servidor funcionando en el puerto:" + puerto)
-})
