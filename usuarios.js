@@ -23,7 +23,7 @@ router.post("/registro", function(req, res) {
                 }
             )
         }else{
-            //falta añadir si esta en blanco
+            //falta añadir si esta en
             res.send({ mensaje: "Email ya registrado"})
         }
     })

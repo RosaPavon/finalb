@@ -110,11 +110,9 @@ app.all("/api", function (req, res){
         res.send({mensaje:"error"})
     }
     else{
-        res.send({logged:true, mensaje:"Login correcto", user:user})
+        res.send({logged:true, mensaje:"Login correcto", user:req.user})
     }
-})
-
-   
+}) 
     
 })
 
@@ -126,32 +124,24 @@ app.all("/api/fail", function(req, res){
         mensaje:"Login incorrecto"})
 })
 
+app.post("/usuario", function (req,res){
+    console.log("prueba 1")
+    if(req.isAuthenticated()){
+        app.locals.db.collection("users").findOne({email:req.body.email},
+            function (err,user){
+                res.send({user:user})
+         }) 
+
+    }
+    
+})
+
 //__________________Logout____________________
 
 app.post("/logout", function(req, res){
     req.logOut()
     res.send({mensaje: " Logout correcto"})
 })
-
-
-//_______________RUTAS__________
-
-/* app.get("/usuarios", function(req, res){
-    req.isAuthenticated()
-    ? req.app.locals.db.collection("users")
-    .find({email:req.body.email}, function (err,user){
-        if (err){
-            return done(err)
-        }
-        if(!user){
-            return done(null, null)
-        }
-        return done(null, user) //console.log(user)
-    }))
-     */
-
-    
-
 
 
 
