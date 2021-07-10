@@ -2,6 +2,7 @@ const express=require("express")
 const cors= require("cors")
 const mongodb = require("mongodb")
 const router = express.Router()
+const bcrypt=require("bcrypt")
 require("dotenv").config()
 
 
@@ -32,10 +33,11 @@ app.use(cors())
     })
 ) */
 
-/* const usuarios= require("./usuarios")
+const usuarios= require("./usuarios")
 app.use("/usuarios", usuarios)
-const crearreceta= require("./crearreceta")
-app.use("/crearreceta", crearreceta) */
+
+/* const crearreceta= require("./crearreceta")
+app.use("/crearreceta", crearreceta)  */
 
 /* app.use(passport.initialize())
 app.use(passport.session()) */
@@ -44,6 +46,21 @@ MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTo
     error
     ? console.log("🔴 Mongodb no conectado")
     : (app.locals.db = client.db("cocinillas"), console.log("🟢 Mongodb conectado"))
+})
+
+//-------------Rutas-------
+
+
+app.post("/usuario", function (req,res){
+    console.log("prueba 1")
+    if(req.isAuthenticated()){
+        app.locals.db.collection("users").findOne({email:req.body.email},
+            function (err,user){
+                res.send({user:user})
+         }) 
+
+    }
+    
 })
 
 app.listen(puerto, function(err){
@@ -136,17 +153,7 @@ app.all("/api/fail", function(req, res){
         mensaje:"Login incorrecto"})
 })
 
-app.post("/usuario", function (req,res){
-    console.log("prueba 1")
-    if(req.isAuthenticated()){
-        app.locals.db.collection("users").findOne({email:req.body.email},
-            function (err,user){
-                res.send({user:user})
-         }) 
 
-    }
-    
-})
 
 //__________________Logout____________________
 
