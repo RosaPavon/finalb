@@ -28,7 +28,6 @@ router.post("/registro", function(req, res) {
                             password:contraseinaCifrada,
                             reppassword: contraseinaCifrada,
                             role: "admin",
-                            active: false
         
                         },
                         function (err, respuesta){
