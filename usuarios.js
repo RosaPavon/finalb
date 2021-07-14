@@ -94,6 +94,31 @@ router.put("/editar", function (req, res) {
     }
   );
 });
+router.put("/emailedit", function (req, res) {
+    req.app.locals.db.collection("users").updateOne({ email: req.body.email },{$set: {
+        email: req.body.newemail   
+      },
+    },
+    function (error, datos) {
+      if (error !== null) {
+        console.log(error);
+        res.send({ mensaje: "Ha habido un error" + error });
+      } else {//si no creamos ahora un if no damos feedback al usuario si no encontramos al usuario en la base
+        if(datos.matcheCount !=1 ){
+        if(datos.modifiedCount==1){
+          res.send({error:false, mensaje:"Email actualizado"})
+
+        }else{
+          res.send({error:true, mensaje:"no se ha podido actualizar"})
+
+        }
+      }else{
+        res.send({error:true, mensaje:"Email no encontrado"})
+      }
+      }
+    }
+  );
+});
 
 
 module.exports = router;
