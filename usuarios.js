@@ -57,6 +57,43 @@ router.post("/registro", function(req, res) {
 
 
 
+    router.post("/misdatos", function (req, res) {
+        req.app.locals.db.collection("users").find({email: req.body.email})
+          .toArray(function (error, datos) {
+            if(datos.length !==0){
+              res.send({ error: false, contenido: datos, mensaje:"usuario"   })
+            }else{
+              res.send({ error: true, mensaje:"No se han encontrado usuario" });
+            }
+            
+          });
+      });
+
+router.put("/editar", function (req, res) {
+    req.app.locals.db.collection("users").updateOne({ email: req.body.email },{$set: {
+        usuario: req.body.usuario   
+      },
+    },
+    function (error, datos) {
+      if (error !== null) {
+        console.log(error);
+        res.send({ mensaje: "Ha habido un error" + error });
+      } else {//si no creamos ahora un if no damos feedback al usuario si no encontramos al usuario en la base
+        if(datos.matcheCount !=1 ){
+        if(datos.modifiedCount==1){
+          res.send({error:false, mensaje:"Usuario actualizado"})
+
+        }else{
+          res.send({error:true, mensaje:"no se ha podido actualizar"})
+
+        }
+      }else{
+        res.send({error:true, mensaje:"Usuario no encontrado"})
+      }
+      }
+    }
+  );
+});
 
 
 module.exports = router;

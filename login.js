@@ -22,6 +22,7 @@ const password = req.body.password;
               } else {
                     res.status(200).send({
                     logged:true, mensaje:"Login correcto",
+                    emailToken: email,
                     accessToken: jwt.createAccessToken(userStored),
                     refreshToken: jwt.createRefreshToken(userStored)
                   });
