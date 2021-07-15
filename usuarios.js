@@ -27,6 +27,7 @@ router.post("/registro", function(req, res) {
                             email:req.body.email,
                             password:contraseinaCifrada,
                             reppassword: contraseinaCifrada,
+                            imagen:req.body.imagen,
                             role: "admin",
         
                         },
@@ -118,6 +119,31 @@ router.put("/emailedit", function (req, res) {
       }
     }
   );
+});
+router.put("/imageedit", function (req, res) {
+  req.app.locals.db.collection("users").updateOne({ email: req.body.email },{$set: {
+      imagen: req.body.imagen  
+    },
+  },
+  function (error, datos) {
+    if (error !== null) {
+      console.log(error);
+      res.send({ mensaje: "Ha habido un error" + error });
+    } else {//si no creamos ahora un if no damos feedback al usuario si no encontramos al usuario en la base
+      if(datos.matcheCount !=1 ){
+      if(datos.modifiedCount==1){
+        res.send({error:false, mensaje:"Avatar actualizado"})
+
+      }else{
+        res.send({error:true, mensaje:"no se ha podido actualizar"})
+
+      }
+    }else{
+      res.send({error:true, mensaje:"Avatar no encontrado"})
+    }
+    }
+  }
+);
 });
 
 
