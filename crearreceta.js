@@ -8,9 +8,14 @@ router.post("/crearNuevaReceta", function(req, res) {
     .toArray(function (err, user){
         if (user.length === 0){
             req.app.locals.db.collection("recetas").insertOne(
-                {
-                    titulo:req.body.titulo,
+                {                                      
+                    usuario:req.body.name,
+                    categoria: req.body.categoria, 
+                    dificultad: req.body.dificult , 
+                    titulo:req.body.titulo,                   
+                    ingredientes:req.body.ingredientes,
                     receta:req.body.receta,
+                    foto:req.body.foto,       
                     
                 },
                 function (err, respuesta){

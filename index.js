@@ -42,8 +42,8 @@ app.use("/usuarios", usuarios)
 const login= require("./login")
 app.use("/login", login)
 
-/* const crearreceta= require("./crearreceta")
-app.use("/crearreceta", crearreceta)  */
+const crearreceta= require("./crearreceta")
+app.use("/crearreceta", crearreceta)
 
 app.use(passport.initialize())
 app.use(passport.session()) 
