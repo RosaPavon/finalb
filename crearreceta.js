@@ -48,6 +48,18 @@ router.post("/misrecetas", function (req, res) {
       });
   });
 
+  router.get("/recetario", function (req, res) {
+    req.app.locals.db.collection("recetas").find()
+      .toArray(function (error, datos) {
+        if(datos.length !==0){
+          res.send({ error: false, contenido: datos  })
+        }else{
+            res.send({ error: true, mensaje:"No se han encontrado recetas" });
+        }
+        
+      });
+  });
+
   router.put("/editar", function (req, res) {
     req.app.locals.db.collection("recetas").updateOne({ titulo: req.body.titulo },{$set: {
           usuario:req.body.name,
