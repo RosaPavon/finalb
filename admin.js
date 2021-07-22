@@ -31,7 +31,20 @@ router.post("/guardarReceta", function(req, res) {
             res.send({ mensaje: "Receta ya guardada"})
         }
     })
-
 })
+
+router.post("/recetasguardadas", function (req, res) {
+    req.app.locals.db.collection("recetasguardadas").find({ email:req.body.email})
+      .toArray(function (error, datos) {
+        if(datos.length !==0){
+          res.send({ error: false, contenido: datos  })
+        }else{
+            res.send({ error: true, mensaje:"No se han encontrado recetas"  });
+        }
+        
+      });
+  });
+
+
 
 module.exports = router;
