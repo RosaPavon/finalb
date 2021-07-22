@@ -16,7 +16,8 @@ router.post("/crearNuevaReceta", function(req, res) {
                     titulo:req.body.titulo,                   
                     ingredientes:req.body.ingredientes,
                     receta:req.body.receta,
-                    foto:req.body.foto,       
+                    foto:req.body.foto, 
+                    like:req.body.like       
                     
                 },
                 function (err, respuesta){

@@ -45,6 +45,12 @@ app.use("/login", login)
 const crearreceta= require("./crearreceta")
 app.use("/crearreceta", crearreceta)
 
+const comentarios= require("./comentarios")
+app.use("/comentarios", comentarios)
+
+const admin= require("./admin")
+app.use("/admin", admin)
+
 app.use(passport.initialize())
 app.use(passport.session()) 
 
