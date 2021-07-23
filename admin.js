@@ -28,7 +28,7 @@ router.post("/guardarReceta", function(req, res) {
             )
         }else{
             //falta añadir si esta en blanco
-            res.send({ mensaje: "Receta ya guardada"})
+            res.send({ error: true, mensaje: "Receta ya guardada"})
         }
     })
 })
