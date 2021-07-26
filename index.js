@@ -17,24 +17,12 @@ let db
 
 
 const passport = require("passport")
-/* const LocalStrategy = require("passport-local").Strategy
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const session = require("express-session")
- */
+
 
 
 app.use(express.urlencoded({ extended : false}))//para acceder al body de la petición
 app.use(express.json())
 app.use(cors())
-
-/* app.use(
-    session({
-        secret:"patatamaster",//el string que autetifica que esta cookie la puso esta web
-        resave:false,//evitar crear sesiones vacias
-        saveUninitialized:false,//evita reseteo de sesion
-    })
-)  */
 
 
 const usuarios= require("./usuarios")
@@ -79,95 +67,3 @@ app.listen(puerto, function(err){
     ? console.log("🔴 Servidor fallido")
     : console.log("🟢 Servidor funcionando en el puerto:" + puerto)
 })
-/*  
-//____Autorización y gestión de sesiones____
-
-passport.use(
-    new LocalStrategy(//creamos una nueva clase
-        {//este objeto da la info de email y password
-            usernameField: "email",//aqui nos permite modificar el email por otro elemento
-            passwordField: "password"//aqui nos permite modificar el password por otro elemento
-        },
-        function( email, password, done){//done es funcion interna de passport para ir avanzando pasos
-            app.locals.db.collection("users").findOne(//los datos de nuestro servidor
-                {email : email},//buscamos el email que le hemos pasado
-                function (err, user){
-                    if(err){
-                        return done (err)
-                    }
-                    if (!user){//existe el usuario?
-                        return done(null, false)
-                    }
-                    if (!bcrypt.compareSync(password, user.password)){//si si existe el usuario comprobamos el password
-                        return done (null, false)
-                    }
-                    return done (null, user)//si todo esta ok creamos una sesión al usuario, y pone una cookie en la sesión del usuario
-                })
-        }
-    )
-)
-
-passport.serializeUser(function (user, done){
-    done(null, user.email)//done llama al siguiente paso
-})
-
-passport.deserializeUser(function(user, done) {
-    app.locals.db.collection("users").findOne({email:user.email}, function (err,user){
-
-        done(err, user);
-    });
-});
-
-
-//asi creamos la cookie en el ordenador del usuario para su usuario
-
-//___________________Login___________________
-
-app.post(//funcion authenticate de passport
-    "/login",
-    passport.authenticate("local", {
-        
-        successRedirect:"/api",//si es ok redirigimos a esta dirección
-        failureRedirect: "/api/fail",//si ha ido mal redirigimos a esta dirección
-    })
-)
-
-//login ok
-
-app.all("/api", function (req, res){
-    //hacer llamada a la api y recuperar el usuario
-   
-   app.locals.db.collection("users").findOne({email:req.body.email},
-   function (err,user){
-    if (err){
-        res.send({mensaje:"error"})
-    }
-    else{
-        res.send({logged:true, mensaje:"Login correcto",        
-        accessToken: jwt.createAccessToken(user),
-        refreshToken: jwt.createRefreshToken(user) })
-    }
-}) 
-    
-})
-
-//Fail
-
-app.all("/api/fail", function(req, res){
-    res.status(401).send ({
-        logged:false,
-        mensaje:"Login incorrecto"})
-})
-
-
-
-//__________________Logout____________________
-
-app.post("/logout", function(req, res){
-    req.logOut()
-    res.send({mensaje: " Logout correcto"})
-})
- 
-
-
- */
