@@ -33,6 +33,12 @@ app.use("/login", login)
 const crearreceta= require("./crearreceta")
 app.use("/crearreceta", crearreceta)
 
+const asistira= require("./asistira")
+app.use("/asistira", asistira)
+
+const noasistira= require("./noasistira")
+app.use("/noasistira", noasistira)
+
 const comentarios= require("./comentarios")
 app.use("/comentarios", comentarios)
 
